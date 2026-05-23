@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { reserveStock } from "./reservation.repository";
 
 export async function createReservation({
   productId,
@@ -11,13 +12,11 @@ export async function createReservation({
   quantity: number;
 }) {
   try {
-    const result = await db.$executeRaw`
-      UPDATE "Inventory"
-      SET "reservedStock" = "reservedStock" + ${quantity}
-      WHERE "productId" = ${productId}
-      AND "warehouseId" = ${warehouseId}
-      AND ("totalStock" - "reservedStock") >= ${quantity}
-    `;
+    const result = await reserveStock({
+      productId,
+      warehouseId,
+      quantity,
+    });
 
     if (result === 0) {
       logger.warn("Stock not available");

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { releaseReservation } from "@/services/release.service";
+import { releaseReservation } from "@/features/reservation/release.service";
 
 export async function POST(
   req: NextRequest,

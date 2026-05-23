@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createReservation } from "@/services/reservation.service";
+import { createReservation } from "@/features/reservation/reservation.service";
+import { reservationSchema } from "@/features/reservation/reservation.schema";
 import { redis } from "@/lib/redis";
+import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +16,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json();
+    const json = await req.json();
+    const body = reservationSchema.parse(json);
 
     const reservation = await createReservation(body);
 
@@ -24,6 +27,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(reservation);
   } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation failed", details: error.issues },
+        { status: 400 }
+      );
+    }
+
     if (error.message === "OUT_OF_STOCK") {
       return NextResponse.json(
         { error: "Not enough stock" },

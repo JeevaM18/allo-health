@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { confirmReservation } from "@/services/confirm.service";
+import { confirmReservation } from "@/features/reservation/confirm.service";
 
 export async function POST(
   req: NextRequest,
