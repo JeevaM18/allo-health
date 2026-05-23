@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const warehouses = await db.warehouse.findMany({
@@ -13,21 +15,25 @@ export async function GET() {
       },
     });
 
-    const detailedWarehouses = warehouses.map((warehouse) => ({
+    type WarehouseWithInventory = typeof warehouses[number];
+
+    const detailedWarehouses = warehouses.map((warehouse: WarehouseWithInventory) => ({
       id: warehouse.id,
       name: warehouse.name,
       location: warehouse.location,
       createdAt: warehouse.createdAt,
-      inventories: warehouse.inventories.map((inv) => ({
-        id: inv.id,
-        totalStock: inv.totalStock,
-        reservedStock: inv.reservedStock,
-        availableStock: inv.totalStock - inv.reservedStock,
-        product: {
-          id: inv.product.id,
-          name: inv.product.name,
-        },
-      })),
+      inventories: (warehouse.inventories ?? []).map(
+        (inv: WarehouseWithInventory["inventories"][number]) => ({
+          id: inv.id,
+          totalStock: inv.totalStock,
+          reservedStock: inv.reservedStock,
+          availableStock: inv.totalStock - inv.reservedStock,
+          product: {
+            id: inv.product.id,
+            name: inv.product.name,
+          },
+        })
+      ),
     }));
 
     return NextResponse.json(detailedWarehouses);
