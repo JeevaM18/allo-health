@@ -15,7 +15,8 @@ import {
   CheckCircle,
   Calendar,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  User
 } from "lucide-react";
 
 export default function ReservationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -228,6 +229,16 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
                       <div className="text-sm font-semibold text-white">{reservation.quantity} Unit</div>
                     </div>
                   </div>
+
+                  {reservation.userId && (
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-purple-400 shrink-0" />
+                      <div>
+                        <div className="text-[10px] text-slate-400">Reserved By</div>
+                        <div className="text-sm font-semibold text-white">{reservation.userId}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

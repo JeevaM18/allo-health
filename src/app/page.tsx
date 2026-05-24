@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useReservation } from "@/hooks/useReservation";
 import { useRouter } from "next/navigation";
+import { signIn, signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { 
   Package, 
@@ -13,7 +14,11 @@ import {
   Clock, 
   Sparkles,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  LogIn,
+  LogOut,
+  User,
+  ShieldAlert
 } from "lucide-react";
 
 // Mock metadata to enrich seeded products for retail mockup look
@@ -52,6 +57,7 @@ const DEFAULT_METADATA = {
 };
 
 export default function HomePage() {
+  const { data: session } = useSession();
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -97,6 +103,36 @@ export default function HomePage() {
   };
 
   const handleReserve = async (productId: string) => {
+    // Restrict reservation flow to authenticated users
+    if (!session) {
+      toast((t) => (
+        <div className="flex flex-col gap-2.5 p-1">
+          <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
+            <ShieldAlert className="w-5 h-5 shrink-0" />
+            Authentication Required
+          </div>
+          <p className="text-xs text-slate-300">
+            Please sign in to confirm stock allocation locks.
+          </p>
+          <div className="flex gap-2 justify-end mt-1.5">
+            <button 
+              onClick={() => { toast.dismiss(t.id); signIn("google"); }}
+              className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold transition-all"
+            >
+              Sign In
+            </button>
+            <button 
+              onClick={() => toast.dismiss(t.id)}
+              className="px-2.5 py-1 bg-[#121b2e] hover:bg-[#1f2d47] text-slate-400 rounded-lg text-xs font-medium transition-all"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      ), { duration: 6000 });
+      return;
+    }
+
     const warehouseId = selectedWarehouses[productId];
     if (!warehouseId) {
       toast.error("Please select a warehouse first");
@@ -118,7 +154,7 @@ export default function HomePage() {
     });
 
     toast.promise(reservePromise, {
-      loading: "Initiating stock lock...",
+      loading: "Initiating atomic stock lock...",
       success: (res) => {
         setTimeout(() => router.push(`/reservation/${res.id}`), 500);
         return "Stock locked! Redirecting to checkout...";
@@ -150,7 +186,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-[#121b2e] px-4 py-1.5 rounded-full border border-purple-500/20 text-xs font-semibold text-purple-300">
+            <div className="hidden sm:flex items-center gap-2 bg-[#121b2e] px-4 py-1.5 rounded-full border border-purple-500/20 text-xs font-semibold text-purple-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Live Stock Feed
             </div>
@@ -162,6 +198,44 @@ export default function HomePage() {
             >
               <RefreshCw className={`w-5 h-5 ${refreshing ? "animate-spin text-purple-400" : ""}`} />
             </button>
+
+            <span className="h-6 w-px bg-[#1b263b]/60" />
+
+            {/* Google Authentication Module */}
+            {session ? (
+              <div className="flex items-center gap-3">
+                <div className="hidden md:block text-right">
+                  <div className="text-xs font-bold text-white leading-none">{session.user?.name}</div>
+                  <div className="text-[10px] text-slate-400 mt-1">{session.user?.email}</div>
+                </div>
+                {session.user?.image ? (
+                  <img 
+                    src={session.user.image} 
+                    alt={session.user.name || "User Avatar"} 
+                    className="w-9 h-9 rounded-full border border-purple-500/40"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 border border-purple-500/30">
+                    <User className="w-4 h-4" />
+                  </div>
+                )}
+                <button
+                  onClick={() => signOut()}
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-rose-500/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-2 transition-all"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => signIn("google")}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-purple-500/20"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                Sign In with Google
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -200,8 +274,8 @@ export default function HomePage() {
             <div className="flex items-center gap-3 p-3 text-left border-t sm:border-t-0 sm:border-l border-[#1b263b]">
               <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
               <div>
-                <div className="text-xs text-slate-400">Allocation</div>
-                <div className="text-sm font-semibold text-white">Guaranteed Lock</div>
+                <div className="text-xs text-slate-400">Idempotency</div>
+                <div className="text-sm font-semibold text-white">Safe Retries Enabled</div>
               </div>
             </div>
           </div>
