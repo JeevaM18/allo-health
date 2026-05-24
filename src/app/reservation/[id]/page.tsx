@@ -16,7 +16,8 @@ import {
   Calendar,
   Sparkles,
   RefreshCw,
-  User
+  User,
+  ArrowLeft
 } from "lucide-react";
 
 export default function ReservationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -151,9 +152,13 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
               <span className="text-purple-400 font-medium ml-1">Inventory</span>
             </div>
           </div>
-          <div className="bg-[#121b2e] px-4 py-1.5 rounded-full border border-purple-500/20 text-xs font-semibold text-purple-300">
-            Secure Allocation Checkout
-          </div>
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-[#121b2e] hover:text-white text-slate-400 text-xs font-bold transition-all"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </button>
         </div>
       </header>
 
