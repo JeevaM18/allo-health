@@ -54,6 +54,7 @@ model Reservation {
 
   productId     String
   warehouseId   String
+  userId        String?
 
   product       Product @relation(fields: [productId], references: [id])
 

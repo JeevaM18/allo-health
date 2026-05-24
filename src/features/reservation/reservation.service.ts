@@ -6,10 +6,12 @@ export async function createReservation({
   productId,
   warehouseId,
   quantity,
+  userId,
 }: {
   productId: string;
   warehouseId: string;
   quantity: number;
+  userId?: string;
 }) {
   try {
     const result = await reserveStock({
@@ -30,6 +32,7 @@ export async function createReservation({
         quantity,
         status: "PENDING",
         expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        userId,
       },
     });
 
