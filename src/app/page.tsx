@@ -5,13 +5,13 @@ import { useReservation } from "@/hooks/useReservation";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { 
-  Package, 
-  Warehouse as WarehouseIcon, 
-  Layers, 
-  RefreshCw, 
-  ShieldCheck, 
-  Clock, 
+import {
+  Package,
+  Warehouse as WarehouseIcon,
+  Layers,
+  RefreshCw,
+  ShieldCheck,
+  Clock,
   Sparkles,
   ArrowRight,
   TrendingUp,
@@ -58,7 +58,7 @@ const DEFAULT_METADATA = {
 };
 
 export default function HomePage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -69,7 +69,7 @@ export default function HomePage() {
   const fetchProducts = async (isSilent = false) => {
     if (!isSilent) setLoadingProducts(true);
     try {
-      const res = await fetch("/api/products", { cache: "no-store" });
+      const res = await fetch("/api/products");
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
       setProducts(data);
@@ -94,22 +94,8 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    if (status !== "loading") {
-      fetchProducts();
-    }
-  }, [status]);
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-[#070a13] flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293712_1px,transparent_1px),linear-gradient(to_bottom,#1f293712_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        <div className="flex flex-col items-center gap-4 z-10">
-          <RefreshCw className="w-10 h-10 text-purple-500 animate-spin" />
-          <p className="text-slate-400 font-medium text-sm animate-pulse">Establishing secure session context...</p>
-        </div>
-      </div>
-    );
-  }
+    fetchProducts();
+  }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -130,13 +116,13 @@ export default function HomePage() {
             Please sign in to confirm stock allocation locks.
           </p>
           <div className="flex gap-2 justify-end mt-1.5">
-            <button 
+            <button
               onClick={() => { toast.dismiss(t.id); signIn("google"); }}
               className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold transition-all"
             >
               Sign In
             </button>
-            <button 
+            <button
               onClick={() => toast.dismiss(t.id)}
               className="px-2.5 py-1 bg-[#121b2e] hover:bg-[#1f2d47] text-slate-400 rounded-lg text-xs font-medium transition-all"
             >
@@ -156,7 +142,7 @@ export default function HomePage() {
 
     const product = products.find((p) => p.id === productId);
     const selectedInv = product?.inventories.find((inv: any) => inv.warehouse.id === warehouseId);
-    
+
     if (!selectedInv || selectedInv.availableStock <= 0) {
       toast.error("Selected warehouse is currently out of stock");
       return;
@@ -208,7 +194,7 @@ export default function HomePage() {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Live Stock Feed
             </div>
-            
+
             <button
               onClick={handleRefresh}
               disabled={refreshing}
@@ -227,9 +213,9 @@ export default function HomePage() {
                   <div className="text-[10px] text-slate-400 mt-1">{session.user?.email}</div>
                 </div>
                 {session.user?.image ? (
-                  <img 
-                    src={session.user.image} 
-                    alt={session.user.name || "User Avatar"} 
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name || "User Avatar"}
                     className="w-9 h-9 rounded-full border border-purple-500/40"
                   />
                 ) : (
@@ -237,7 +223,7 @@ export default function HomePage() {
                     <User className="w-4 h-4" />
                   </div>
                 )}
-                
+
                 <button
                   onClick={() => router.push("/my-orders")}
                   className="px-3.5 py-2 rounded-xl bg-purple-600/10 border border-purple-500/30 hover:bg-purple-600/20 text-purple-400 hover:text-purple-300 text-xs font-bold flex items-center gap-1.5 transition-all"
@@ -247,7 +233,7 @@ export default function HomePage() {
                 </button>
 
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => signOut()}
                   className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-rose-500/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-2 transition-all"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -274,11 +260,11 @@ export default function HomePage() {
             <Sparkles className="w-3.5 h-3.5" />
             Global Stock Concurrency Lock Enabled
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
             Next-Gen <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-indigo-400 to-blue-400">Inventory Experience</span>
           </h1>
-          
+
           <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-8">
             Lock catalog stock items for <strong className="text-purple-400 font-semibold">10 minutes</strong> with full concurrency safety. Guaranteed race-condition protection.
           </p>
@@ -346,7 +332,7 @@ export default function HomePage() {
 
                 return (
                   <div key={product.id} className="group bg-[#090e1c] rounded-2xl border border-[#1b263b] hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300 flex flex-col justify-between overflow-hidden relative">
-                    
+
                     {/* Floating total stock badge */}
                     <div className="absolute top-4 right-4 z-10 bg-indigo-500/10 backdrop-blur-md border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-semibold text-indigo-300">
                       {product.availableStock} total left
@@ -354,9 +340,9 @@ export default function HomePage() {
 
                     {/* Product Image Section */}
                     <div className="h-48 overflow-hidden relative bg-slate-900 border-b border-[#1b263b]/50">
-                      <img 
-                        src={meta.image} 
-                        alt={product.name} 
+                      <img
+                        src={meta.image}
+                        alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#090e1c] via-transparent to-transparent" />
@@ -371,7 +357,7 @@ export default function HomePage() {
                         <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-3">
                           {meta.desc}
                         </p>
-                        
+
                         <div className="text-2xl font-black text-white mb-6">
                           {meta.price}
                         </div>
@@ -385,7 +371,7 @@ export default function HomePage() {
                             {product.inventories.map((inv: any) => {
                               const isSelected = selectedWarehouses[product.id] === inv.warehouse.id;
                               const isOut = inv.availableStock <= 0;
-                              
+
                               // Determine Stock Status UI styling
                               let statusText = `${inv.availableStock} available`;
                               let statusClass = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
@@ -401,11 +387,10 @@ export default function HomePage() {
                                 <button
                                   key={inv.id}
                                   onClick={() => setSelectedWarehouses(prev => ({ ...prev, [product.id]: inv.warehouse.id }))}
-                                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl border text-sm transition-all duration-300 ${
-                                    isSelected 
-                                      ? "bg-[#161d33] border-purple-500 text-white shadow-inner" 
+                                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl border text-sm transition-all duration-300 ${isSelected
+                                      ? "bg-[#161d33] border-purple-500 text-white shadow-inner"
                                       : "bg-[#0b1022] border-[#1b263b] text-slate-400 hover:border-slate-500 hover:text-white"
-                                  }`}
+                                    }`}
                                 >
                                   <div className="flex items-center gap-2">
                                     <WarehouseIcon className={`w-4 h-4 ${isSelected ? "text-purple-400" : "text-slate-500"}`} />
@@ -425,11 +410,10 @@ export default function HomePage() {
                       <button
                         onClick={() => handleReserve(product.id)}
                         disabled={!hasStock || reserving}
-                        className={`w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg ${
-                          hasStock
+                        className={`w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg ${hasStock
                             ? "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-500/15 cursor-pointer active:scale-[0.98]"
                             : "bg-slate-800 border border-slate-700 text-slate-500 cursor-not-allowed shadow-none"
-                        }`}
+                          }`}
                       >
                         {reserving ? (
                           <>

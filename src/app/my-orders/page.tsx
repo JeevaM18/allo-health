@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCountdown } from "@/hooks/useCountdown";
 import toast from "react-hot-toast";
-import { 
-  ShoppingBag, 
-  ArrowLeft, 
-  Clock, 
-  MapPin, 
-  CheckCircle, 
-  XCircle, 
-  Trash2, 
+import {
+  ShoppingBag,
+  ArrowLeft,
+  Clock,
+  MapPin,
+  CheckCircle,
+  XCircle,
+  Trash2,
   Calendar,
   Layers,
   RefreshCw,
@@ -35,11 +35,10 @@ function PendingOrderCountdown({ expiresAt, onExpire }: { expiresAt: string; onE
   }
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border transition-colors ${
-      totalSeconds <= 60 
-        ? "text-rose-400 bg-rose-500/10 border-rose-500/20 animate-pulse" 
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border transition-colors ${totalSeconds <= 60
+        ? "text-rose-400 bg-rose-500/10 border-rose-500/20 animate-pulse"
         : "text-purple-400 bg-purple-500/10 border-purple-500/20"
-    }`}>
+      }`}>
       <Clock className="w-3.5 h-3.5" />
       Expires in {formatted}
     </span>
@@ -55,7 +54,7 @@ export default function MyOrders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("/api/my-reservations", { cache: "no-store" });
+      const res = await fetch("/api/my-reservations");
       if (!res.ok) throw new Error("Failed to load orders");
       const data = await res.json();
       setOrders(data);
@@ -171,7 +170,7 @@ export default function MyOrders() {
             </div>
             <h2 className="text-xl font-bold text-white">No active allocations found</h2>
             <p className="text-slate-400 text-sm max-w-md">You haven't locked or purchased any stock yet. Head back to the dashboard to secure item allocations!</p>
-            <button 
+            <button
               onClick={() => router.push("/")}
               className="mt-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-[0.98]"
             >
@@ -189,7 +188,7 @@ export default function MyOrders() {
               let statusLabel = "Released";
               let statusClass = "text-slate-400 bg-slate-500/10 border-slate-500/20";
               let statusIcon = <XCircle className="w-4 h-4" />;
-              
+
               if (isPending) {
                 statusLabel = "Pending Lock";
                 statusClass = "text-purple-400 bg-purple-500/10 border-purple-500/20 animate-pulse";
@@ -201,14 +200,13 @@ export default function MyOrders() {
               }
 
               return (
-                <div 
-                  key={order.id} 
-                  className={`bg-[#090e1c] rounded-2xl border border-[#1b263b] overflow-hidden transition-all duration-300 ${
-                    isPending ? "shadow-lg shadow-purple-500/5 border-purple-500/30" : "hover:border-slate-800"
-                  }`}
+                <div
+                  key={order.id}
+                  className={`bg-[#090e1c] rounded-2xl border border-[#1b263b] overflow-hidden transition-all duration-300 ${isPending ? "shadow-lg shadow-purple-500/5 border-purple-500/30" : "hover:border-slate-800"
+                    }`}
                 >
                   <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    
+
                     {/* Item Details */}
                     <div className="md:col-span-6 space-y-2">
                       <div className="flex items-center gap-3">
@@ -216,16 +214,16 @@ export default function MyOrders() {
                           {statusIcon}
                           {statusLabel}
                         </span>
-                        
+
                         {isPending && (
                           <PendingOrderCountdown expiresAt={order.expiresAt} onExpire={fetchOrders} />
                         )}
                       </div>
-                      
+
                       <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
                         {order.product?.name || "Inventory Item"}
                       </h3>
-                      
+
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-400 font-medium">
                         <div className="flex items-center gap-1.5">
                           <MapPin className="w-3.5 h-3.5 text-slate-500" />

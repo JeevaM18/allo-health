@@ -4,14 +4,14 @@ import { useEffect, useState, use } from "react";
 import { useCountdown } from "@/hooks/useCountdown";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { 
-  Lock, 
-  ShoppingBag, 
-  Trash2, 
-  AlertTriangle, 
-  Clock, 
-  Clipboard, 
-  MapPin, 
+import {
+  Lock,
+  ShoppingBag,
+  Trash2,
+  AlertTriangle,
+  Clock,
+  Clipboard,
+  MapPin,
   CheckCircle,
   Calendar,
   Sparkles,
@@ -31,7 +31,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
   const fetchReservation = async () => {
     try {
-      const res = await fetch(`/api/reservations/${id}`, { cache: "no-store" });
+      const res = await fetch(`/api/reservations/${id}`);
       if (!res.ok) throw new Error("Reservation not found");
       const data = await res.json();
       setReservation(data);
@@ -136,9 +136,8 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293712_1px,transparent_1px),linear-gradient(to_bottom,#1f293712_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       {/* Decorative Radial Glows */}
-      <div className={`absolute top-[10%] left-[20%] w-[35rem] h-[35rem] rounded-full blur-[120px] pointer-events-none transition-colors duration-1000 ${
-        isLowTime ? "bg-rose-900/10" : "bg-purple-900/10"
-      }`} />
+      <div className={`absolute top-[10%] left-[20%] w-[35rem] h-[35rem] rounded-full blur-[120px] pointer-events-none transition-colors duration-1000 ${isLowTime ? "bg-rose-900/10" : "bg-purple-900/10"
+        }`} />
 
       {/* Header bar */}
       <header className="border-b border-[#1b263b] bg-[#090e1c]/80 backdrop-blur-md sticky top-0 z-50">
@@ -165,15 +164,13 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
       {/* Main Panel content */}
       <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full flex flex-col justify-center z-10">
         <div className="bg-[#090e1c] rounded-3xl border border-[#1b263b] shadow-2xl relative overflow-hidden">
-          
+
           {/* Visual state indicator header panel */}
-          <div className={`border-b border-[#1b263b] p-6 flex flex-col md:flex-row items-center justify-between gap-4 transition-colors duration-1000 ${
-            isLowTime ? "bg-rose-500/5" : "bg-[#0c1326]"
-          }`}>
+          <div className={`border-b border-[#1b263b] p-6 flex flex-col md:flex-row items-center justify-between gap-4 transition-colors duration-1000 ${isLowTime ? "bg-rose-500/5" : "bg-[#0c1326]"
+            }`}>
             <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-1000 ${
-                isLowTime ? "bg-rose-500/20 text-rose-400" : "bg-purple-500/20 text-purple-400"
-              }`}>
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-1000 ${isLowTime ? "bg-rose-500/20 text-rose-400" : "bg-purple-500/20 text-purple-400"
+                }`}>
                 <Lock className="w-6 h-6 animate-pulse" />
               </div>
               <div>
@@ -184,14 +181,12 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
             {/* Countdown box */}
             <div className="flex items-center gap-3 bg-[#121b2e] px-5 py-2.5 rounded-2xl border border-[#1d2b4a]">
-              <Clock className={`w-5 h-5 transition-colors duration-1000 ${
-                isLowTime ? "text-rose-400 animate-bounce" : "text-purple-400"
-              }`} />
+              <Clock className={`w-5 h-5 transition-colors duration-1000 ${isLowTime ? "text-rose-400 animate-bounce" : "text-purple-400"
+                }`} />
               <div className="text-right">
                 <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Lock Expiry Clock</div>
-                <div className={`text-sm font-semibold tracking-wide transition-colors duration-1000 ${
-                  isLowTime ? "text-rose-400 font-bold" : "text-purple-300"
-                }`}>
+                <div className={`text-sm font-semibold tracking-wide transition-colors duration-1000 ${isLowTime ? "text-rose-400 font-bold" : "text-purple-300"
+                  }`}>
                   Expires in {Math.floor(totalSeconds / 60)} min {totalSeconds % 60} sec
                 </div>
               </div>
@@ -200,14 +195,14 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
           {/* Time Limit Progress Bar */}
           <div className="w-full bg-[#121b2e] h-1">
-            <div 
+            <div
               className={`h-full transition-all duration-1000 ${isLowTime ? "bg-rose-500" : "bg-purple-500"}`}
               style={{ width: `${progressPercent}%` }}
             />
           </div>
 
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            
+
             {/* Left side: Reservation Summary receipt */}
             <div className="space-y-6">
               <div>
@@ -253,8 +248,8 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
               {/* Security ID Badge */}
               <div className="flex items-center justify-between bg-[#121b2e]/60 border border-[#1b263b]/50 rounded-xl px-4 py-3 text-xs">
                 <span className="text-slate-400 font-mono select-none">ID: {id.substring(0, 8)}...{id.substring(id.length - 8)}</span>
-                <button 
-                  onClick={copyId} 
+                <button
+                  onClick={copyId}
                   className="text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1.5 transition-colors"
                 >
                   <Clipboard className="w-3.5 h-3.5" />
@@ -265,11 +260,11 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
             {/* Right side: Instructions and confirming action triggers */}
             <div className="flex flex-col justify-between gap-8">
-              
+
               {/* Warnings and Info */}
               <div className="space-y-4">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Checkout Instructions</h3>
-                
+
                 {isLowTime ? (
                   <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 flex gap-3 text-rose-300 text-sm">
                     <AlertTriangle className="w-5 h-5 shrink-0 text-rose-400" />
