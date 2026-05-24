@@ -5,65 +5,48 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Create Products
-  const product1 = await prisma.product.create({
-    data: {
-      name: "iPhone 15",
-    },
-  });
+  // Clean existing data first to prevent duplicate/constraint errors!
+  await prisma.inventory.deleteMany();
+  await prisma.reservation.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.warehouse.deleteMany();
 
-  const product2 = await prisma.product.create({
-    data: {
-      name: "Samsung Galaxy S24",
-    },
-  });
+  // Create Products
+  const p1 = await prisma.product.create({ data: { name: "iPhone 15" } });
+  const p2 = await prisma.product.create({ data: { name: "Samsung Galaxy S24" } });
+  const p3 = await prisma.product.create({ data: { name: "MacBook Pro" } });
+  const p4 = await prisma.product.create({ data: { name: "iPad Pro" } });
+  const p5 = await prisma.product.create({ data: { name: "AirPods Max" } });
 
   // Create Warehouses
-  const warehouse1 = await prisma.warehouse.create({
-    data: {
-      name: "Chennai Warehouse",
-      location: "Chennai",
-    },
+  const w1 = await prisma.warehouse.create({
+    data: { name: "Chennai Warehouse", location: "Chennai" },
   });
-
-  const warehouse2 = await prisma.warehouse.create({
-    data: {
-      name: "Bangalore Warehouse",
-      location: "Bangalore",
-    },
+  const w2 = await prisma.warehouse.create({
+    data: { name: "Bangalore Warehouse", location: "Bangalore" },
   });
 
   // Create Inventory
   await prisma.inventory.createMany({
     data: [
-      {
-        productId: product1.id,
-        warehouseId: warehouse1.id,
-        totalStock: 10,
-        reservedStock: 0,
-      },
-      {
-        productId: product1.id,
-        warehouseId: warehouse2.id,
-        totalStock: 5,
-        reservedStock: 0,
-      },
-      {
-        productId: product2.id,
-        warehouseId: warehouse1.id,
-        totalStock: 8,
-        reservedStock: 0,
-      },
-      {
-        productId: product2.id,
-        warehouseId: warehouse2.id,
-        totalStock: 6,
-        reservedStock: 0,
-      },
+      { productId: p1.id, warehouseId: w1.id, totalStock: 10, reservedStock: 0 },
+      { productId: p1.id, warehouseId: w2.id, totalStock: 5, reservedStock: 0 },
+      
+      { productId: p2.id, warehouseId: w1.id, totalStock: 8, reservedStock: 0 },
+      { productId: p2.id, warehouseId: w2.id, totalStock: 6, reservedStock: 0 },
+
+      { productId: p3.id, warehouseId: w1.id, totalStock: 12, reservedStock: 0 },
+      { productId: p3.id, warehouseId: w2.id, totalStock: 4, reservedStock: 0 },
+
+      { productId: p4.id, warehouseId: w1.id, totalStock: 15, reservedStock: 0 },
+      { productId: p4.id, warehouseId: w2.id, totalStock: 9, reservedStock: 0 },
+
+      { productId: p5.id, warehouseId: w1.id, totalStock: 7, reservedStock: 0 },
+      { productId: p5.id, warehouseId: w2.id, totalStock: 1, reservedStock: 0 }, // Displays 'Only 1 left!' warning status!
     ],
   });
 
-  console.log("✅ Seeding completed");
+  console.log("✅ Seeding completed successfully");
 }
 
 main()

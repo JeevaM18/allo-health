@@ -27,6 +27,21 @@ const PRODUCT_METADATA: Record<string, { desc: string; price: string; image: str
     desc: "Next-gen Galaxy AI, premium titanium design, 200MP camera, and immersive QHD+ display.",
     price: "₹1,29,999.00",
     image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=800&auto=format&fit=crop"
+  },
+  "MacBook Pro": {
+    desc: "Supercharged by M3 Max chip. Liquid Retina XDR display, up to 22 hours of battery life, and pro port layout.",
+    price: "₹1,69,900.00",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800&auto=format&fit=crop"
+  },
+  "iPad Pro": {
+    desc: "Thinpossible design. Ultra Retina Tandem OLED display, M4 chip, and compatible with Apple Pencil Pro.",
+    price: "₹99,900.00",
+    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=800&auto=format&fit=crop"
+  },
+  "AirPods Max": {
+    desc: "High-fidelity audio with industry-leading Active Noise Cancellation and spatial audio tracking.",
+    price: "₹59,900.00",
+    image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=800&auto=format&fit=crop"
   }
 };
 
