@@ -36,20 +36,11 @@ export async function GET() {
       ),
     }));
 
-    return NextResponse.json(detailedWarehouses, {
-      headers: {
-        "Cache-Control": "no-store",
-      },
-    });
+    return NextResponse.json(detailedWarehouses);
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch warehouses" },
-      {
-        status: 500,
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      }
+      { status: 500 }
     );
   }
 }
