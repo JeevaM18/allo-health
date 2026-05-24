@@ -18,7 +18,8 @@ import {
   LogIn,
   LogOut,
   User,
-  ShieldAlert
+  ShieldAlert,
+  ShoppingBag
 } from "lucide-react";
 
 // Mock metadata to enrich seeded products for retail mockup look
@@ -219,6 +220,15 @@ export default function HomePage() {
                     <User className="w-4 h-4" />
                   </div>
                 )}
+                
+                <button
+                  onClick={() => router.push("/my-orders")}
+                  className="px-3.5 py-2 rounded-xl bg-purple-600/10 border border-purple-500/30 hover:bg-purple-600/20 text-purple-400 hover:text-purple-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  My Orders
+                </button>
+
                 <button
                   onClick={() => signOut()}
                   className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-rose-500/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-2 transition-all"
