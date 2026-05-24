@@ -428,7 +428,7 @@ export default function HomePage() {
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                           </>
                         ) : (
-                          "Out of stock"
+                          "Out of stock (409 protected)"
                         )}
                       </button>
                     </div>
