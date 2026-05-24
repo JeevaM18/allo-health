@@ -2,10 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { createReservation } from "@/features/reservation/reservation.service";
 import { reservationSchema } from "@/features/reservation/reservation.schema";
 import { redis } from "@/lib/redis";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
 import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please sign in to reserve stock." },
+        { status: 401 }
+      );
+    }
+
     const json = await req.json();
     const body = reservationSchema.parse(json);
 
@@ -21,7 +32,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 2️⃣ Process normally
-    const reservation = await createReservation(body);
+    const reservation = await createReservation({
+      ...body,
+      userId: session.user.email,
+    });
 
     // 3️⃣ Store response
     if (key) {
