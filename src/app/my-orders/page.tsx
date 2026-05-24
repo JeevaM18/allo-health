@@ -24,10 +24,11 @@ function PendingOrderCountdown({ expiresAt, onExpire }: { expiresAt: string; onE
   const { totalSeconds, formatted } = useCountdown(expiresAt);
 
   useEffect(() => {
-    if (totalSeconds <= 0) {
+    const hasExpired = new Date(expiresAt).getTime() - Date.now() <= 0;
+    if (hasExpired) {
       onExpire();
     }
-  }, [totalSeconds, onExpire]);
+  }, [totalSeconds, expiresAt, onExpire]);
 
   if (totalSeconds <= 0) {
     return <span className="text-rose-400 font-bold text-xs uppercase tracking-wider bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-md">Expired</span>;

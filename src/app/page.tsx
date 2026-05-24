@@ -148,20 +148,23 @@ export default function HomePage() {
       return;
     }
 
-    const reservePromise = createReservation({
-      productId,
-      warehouseId,
-      quantity: 1,
-    });
+    const loadingToast = toast.loading("Initiating atomic stock lock...");
+    try {
+      const res = await createReservation({
+        productId,
+        warehouseId,
+        quantity: 1,
+      });
 
-    toast.promise(reservePromise, {
-      loading: "Initiating atomic stock lock...",
-      success: (res) => {
-        setTimeout(() => router.push(`/reservation/${res.id}`), 500);
-        return "Stock locked! Redirecting to checkout...";
-      },
-      error: (err) => err.message || "Failed to secure reservation",
-    });
+      if (res && res.id) {
+        toast.success("Stock locked! Redirecting to checkout...", { id: loadingToast });
+        router.push(`/reservation/${res.id}`);
+      } else {
+        throw new Error("Invalid response received from server");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to secure reservation", { id: loadingToast });
+    }
   };
 
   return (

@@ -50,12 +50,15 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
   // Auto redirect on expiry
   useEffect(() => {
-    if (reservation && totalSeconds <= 0 && reservation.status === "PENDING") {
-      toast.error("Reservation window expired! Stock has been automatically rolled back.", {
-        duration: 5000,
-        id: "expiry-toast"
-      });
-      router.push("/");
+    if (reservation && reservation.status === "PENDING") {
+      const hasExpired = new Date(reservation.expiresAt).getTime() - Date.now() <= 0;
+      if (hasExpired) {
+        toast.error("Reservation window expired! Stock has been automatically rolled back.", {
+          duration: 5000,
+          id: "expiry-toast"
+        });
+        router.push("/");
+      }
     }
   }, [totalSeconds, reservation, router]);
 
