@@ -20,15 +20,29 @@ export async function GET(
     if (!reservation) {
       return NextResponse.json(
         { error: "Reservation not found" },
-        { status: 404 }
+        {
+          status: 404,
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        }
       );
     }
 
-    return NextResponse.json(reservation);
+    return NextResponse.json(reservation, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch reservation" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
     );
   }
 }

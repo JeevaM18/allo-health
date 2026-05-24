@@ -12,7 +12,12 @@ export async function GET() {
     if (!session || !session.user || !session.user.email) {
       return NextResponse.json(
         { error: "Unauthorized" },
-        { status: 401 }
+        {
+          status: 401,
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        }
       );
     }
 
@@ -29,11 +34,20 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(reservations);
+    return NextResponse.json(reservations, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch user reservations" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
     );
   }
 }

@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,7 +15,12 @@ export async function POST(req: NextRequest) {
     if (!session || !session.user || !session.user.email) {
       return NextResponse.json(
         { error: "Unauthorized. Please sign in to reserve stock." },
-        { status: 401 }
+        {
+          status: 401,
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        }
       );
     }
 
@@ -27,7 +34,11 @@ export async function POST(req: NextRequest) {
       const cached = await redis.get(key);
 
       if (cached) {
-        return NextResponse.json(cached);
+        return NextResponse.json(cached, {
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        });
       }
     }
 
@@ -42,26 +53,45 @@ export async function POST(req: NextRequest) {
       await redis.set(key, reservation, { ex: 600 }); // 10 mins
     }
 
-    return NextResponse.json(reservation);
+    return NextResponse.json(reservation, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
 
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.issues },
-        { status: 400 }
+        {
+          status: 400,
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        }
       );
     }
 
     if (error.message === "OUT_OF_STOCK") {
       return NextResponse.json(
         { error: "Not enough stock" },
-        { status: 409 }
+        {
+          status: 409,
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        }
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
     );
   }
 }

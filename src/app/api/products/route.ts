@@ -57,11 +57,20 @@ export async function GET() {
       }
     );
 
-    return NextResponse.json(productsWithAvailableStock);
+    return NextResponse.json(productsWithAvailableStock, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
     );
   }
 }
