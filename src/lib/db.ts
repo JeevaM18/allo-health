@@ -9,12 +9,11 @@ const globalForPrisma = globalThis as unknown as {
 
 const connectionString = process.env.DATABASE_URL!;
 
-// ✅ Reuse pool
 const pool =
   globalForPrisma.pool ??
   new Pool({
     connectionString,
-    max: 1, // VERY IMPORTANT
+    max: 1, 
   });
 
 if (process.env.NODE_ENV !== "production") {
@@ -23,7 +22,6 @@ if (process.env.NODE_ENV !== "production") {
 
 const adapter = new PrismaPg(pool);
 
-// ✅ Prisma with adapter
 export const db =
   globalForPrisma.prisma ??
   new PrismaClient({
