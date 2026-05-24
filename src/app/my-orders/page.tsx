@@ -55,7 +55,7 @@ export default function MyOrders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("/api/my-reservations");
+      const res = await fetch("/api/my-reservations", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to load orders");
       const data = await res.json();
       setOrders(data);

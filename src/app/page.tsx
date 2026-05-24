@@ -58,7 +58,7 @@ const DEFAULT_METADATA = {
 };
 
 export default function HomePage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -69,7 +69,7 @@ export default function HomePage() {
   const fetchProducts = async (isSilent = false) => {
     if (!isSilent) setLoadingProducts(true);
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch("/api/products", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
       setProducts(data);
@@ -94,8 +94,22 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (status !== "loading") {
+      fetchProducts();
+    }
+  }, [status]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-[#070a13] flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293712_1px,transparent_1px),linear-gradient(to_bottom,#1f293712_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="flex flex-col items-center gap-4 z-10">
+          <RefreshCw className="w-10 h-10 text-purple-500 animate-spin" />
+          <p className="text-slate-400 font-medium text-sm animate-pulse">Establishing secure session context...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -233,7 +247,7 @@ export default function HomePage() {
                 </button>
 
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: "/" })}
                   className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-rose-500/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-2 transition-all"
                 >
                   <LogOut className="w-3.5 h-3.5" />

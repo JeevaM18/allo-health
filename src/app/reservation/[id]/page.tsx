@@ -31,7 +31,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
   const fetchReservation = async () => {
     try {
-      const res = await fetch(`/api/reservations/${id}`);
+      const res = await fetch(`/api/reservations/${id}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Reservation not found");
       const data = await res.json();
       setReservation(data);
