@@ -189,10 +189,10 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
               }`} />
               <div className="text-right">
                 <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Lock Expiry Clock</div>
-                <div className={`text-xl font-mono font-black transition-colors duration-1000 ${
-                  isLowTime ? "text-rose-400" : "text-white"
+                <div className={`text-sm font-semibold tracking-wide transition-colors duration-1000 ${
+                  isLowTime ? "text-rose-400 font-bold" : "text-purple-300"
                 }`}>
-                  {formatted}
+                  Expires in {Math.floor(totalSeconds / 60)} min {totalSeconds % 60} sec
                 </div>
               </div>
             </div>
